@@ -136,6 +136,13 @@ sed -i 's/is_desktop_android = !!BUILDFLAG(IS_DESKTOP_ANDROID);/is_desktop_andro
 sed -i 's/is_android_mobile = is_android_any \&\& !is_android_desktop;/is_android_mobile = is_android_any \&\& is_android_desktop;/' components/omnibox/browser/autocomplete_result.cc
 # sed -i 's|OmniboxCapabilities.hasDesktopExperience(context)|true|g' chrome/browser/ui/android/omnibox/java/src/org/chromium/chrome/browser/omnibox/FuseboxSessionState.java
 
+# context menu width: default min is 200dp, which collapses the menu without Google Lens items
+sed -i 's|<dimen name="menu_width_min">200dp</dimen>|<dimen name="menu_width_min">300dp</dimen>|' components/browser_ui/styles/android/java/res/values/dimens.xml
+
+# tab switcher thumbnails: upstream captures at 1.5x/dpi and halves the bitmap on display, so previews
+# on high-dpi phones get upscaled ~2x into the grid card; raise the capture scale to stay sharp
+sed -i 's|thumbnailScale = 1.5f / deviceDensity;|thumbnailScale = Math.min(1.f, 3.5f / deviceDensity);|' chrome/browser/tab_ui/android/java/src/org/chromium/chrome/browser/tab_ui/TabContentManager.java
+
 # desktop: menu
 sed -i 's|if (!IncognitoUtils.shouldOpenIncognitoAsWindow() \|\| is|if (!shouldShowNewIncognitoWindow() \|\| is|' chrome/android/java/src/org/chromium/chrome/browser/tabbed_mode/TabbedAppMenuPropertiesDelegate.java
 sed -i 's|if (!separateIncognitoWindow \|\| is|if (!shouldShowNewIncognitoWindow() \|\| is|' chrome/android/java/src/org/chromium/chrome/browser/tabbed_mode/TabbedAppMenuPropertiesDelegate.java
